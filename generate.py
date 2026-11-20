@@ -1,197 +1,150 @@
-import os, re, json, base64, wave, time, shutil, subprocess, sys, tempfile
+import os, re, sys, json, time, datetime
 import urllib.request, urllib.error
-from PIL import Image, ImageDraw, ImageFont
 
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
-TTS_MODEL = "gemini-3.8-flash-tts"
-VOICE = "Puck"
-STYLE = "Clear, cheerful, friendly teaching voice."
-PER_RUN = 1
-START_TOPIC = int(os.environ.get("START_TOPIC", "1"))   # 1 = progress.json er prothom topic
-REPO = os.environ.get("GITHUB_REPOSITORY", "")
+GROQ_KEY = os.environ.get("GROQ_API_KEY")
+MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
 PROGRESS_FILE = "progress.json"
-W, H = 1280, 720
-FONT_DIR = "/usr/share/fonts/truetype/dejavu/"
+TOPICS_DIR = "topics"
 
-BG = (15, 23, 42)
-ACCENT = (56, 189, 248)
-TEXT = (226, 232, 240)
-MUTED = (148, 163, 184)
-
-
-def font(name, size):
-    return ImageFont.truetype(FONT_DIR + name, size)
-
-
-def wrap(draw, text, f, maxw):
-    lines, cur = [], ""
-    for w in text.split():
-        t = (cur + " " + w).strip()
-        if draw.textlength(t, font=f) <= maxw:
-            cur = t
-        else:
-            lines.append(cur)
-            cur = w
-    if cur:
-        lines.append(cur)
-    return lines
-
-
-def make_slide(path, topic, n, total, title, bullets):
-    img = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(img)
-    d.rectangle([0, 0, 16, H], fill=ACCENT)
-    d.text((80, 50), topic.upper(), font=font("DejaVuSans.ttf", 26), fill=MUTED)
-    y = 110
-    for line in wrap(d, title, font("DejaVuSans-Bold.ttf", 60), 1100):
-        d.text((80, y), line, font=font("DejaVuSans-Bold.ttf", 60), fill=TEXT)
-        y += 76
-    y += 10
-    d.rectangle([80, y, 280, y + 6], fill=ACCENT)
-    y += 50
-    bf = font("DejaVuSans.ttf", 38)
-    for b in bullets[:4]:
-        lines = wrap(d, b, bf, 1050)
-        d.rectangle([80, y + 14, 96, y + 30], fill=ACCENT)
-        for line in lines:
-            d.text((120, y), line, font=bf, fill=TEXT)
-            y += 52
-        y += 22
-    d.text((W - 220, H - 60), f"Scene {n} / {total}", font=font("DejaVuSans.ttf", 24), fill=MUTED)
-    d.rectangle([0, H - 10, int(W * n / total), H], fill=ACCENT)
-    img.save(path)
+# Ei list ta tumi nijer moto edit korte paro. Upor theke ek ta kore topic nibe.
+TOPICS = [
+    "Python for AI Engineering",
+    "NumPy and Pandas Essentials",
+    "Math for Machine Learning: Linear Algebra",
+    "Math for Machine Learning: Probability and Statistics",
+    "Machine Learning Fundamentals",
+    "Supervised vs Unsupervised Learning",
+    "Model Evaluation: Metrics, Overfitting, Cross-Validation",
+    "Feature Engineering",
+    "Scikit-learn Workflow",
+    "Neural Networks Basics",
+    "Backpropagation and Gradient Descent",
+    "Deep Learning with PyTorch",
+    "Convolutional Neural Networks",
+    "Sequence Models and RNNs",
+    "Transformers and Attention",
+    "Large Language Models Explained",
+    "Prompt Engineering",
+    "Embeddings and Vector Databases",
+    "Retrieval-Augmented Generation (RAG)",
+    "Fine-Tuning LLMs: LoRA and PEFT",
+    "AI Agents and Tool Use",
+    "Building APIs for AI with FastAPI",
+    "Docker for AI Projects",
+    "MLOps: Experiment Tracking and Model Registry",
+    "Deploying Models to the Cloud",
+    "Evaluating and Monitoring LLM Apps",
+    "AI Safety and Responsible AI",
+    "Building an End-to-End AI Project",
+]
 
 
-def parse_script(path):
-    txt = open(path, encoding="utf-8").read().replace("\u2011", "-")
-    scenes = []
-    for block in re.split(r"^## Scene \d+: ", txt, flags=re.M)[1:]:
-        title, _, rest = block.partition("\n")
-        m = re.search(r"On-screen:\s*(.*?)\s*Narration:\s*(.*)", rest, re.S)
-        if not m:
-            continue
-        bullets = [re.sub(r"^- ", "", l).strip() for l in m.group(1).splitlines() if l.strip()]
-        narration = " ".join(m.group(2).split())
-        scenes.append((title.strip(), bullets, narration))
-    return scenes
+def slugify(s):
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
 
-def tts(text):
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{TTS_MODEL}:generateContent"
+def load_progress():
+    if os.path.exists(PROGRESS_FILE):
+        return json.load(open(PROGRESS_FILE, encoding="utf-8"))
+    return []
+
+
+def groq_json(topic):
+    system = (
+        "You are an AI engineering teacher. Reply with valid JSON only, no markdown fences. "
+        "Schema: {\"summary\": str, \"key_points\": [str], \"scenes\": [{\"title\": str, "
+        "\"bullets\": [str], \"narration\": str}]}. "
+        "Rules: exactly 6 scenes. Scene title max 6 words. 3 or 4 bullets per scene, "
+        "each max 60 characters. Narration: 2 to 3 plain spoken sentences per scene, "
+        "no stage directions, no emojis, no markdown, no scene numbers. "
+        "Scene 1 introduces the topic, the last scene is a short recap."
+    )
+    user = f"Create a short beginner-friendly lesson on: {topic}"
     payload = {
-        # 3.8 reads text verbatim, so style goes in speech_metadata, not in the text
-        "contents": [{"parts": [{
-            "text": text,
-            "speech_metadata": {"style": STYLE},
-        }]}],
-        "generationConfig": {
-            "responseModalities": ["AUDIO"],
-            "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": VOICE}}},
-        },
+        "model": MODEL,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "temperature": 0.6,
+        "response_format": {"type": "json_object"},
     }
-    headers = {"Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY}
-    for attempt in range(5):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {GROQ_KEY}",
+        "User-Agent": "daily-ai-topic/1.0",
+    }
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    for attempt in range(4):
         req = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers)
         try:
-            r = json.load(urllib.request.urlopen(req, timeout=180))
-            part = r["candidates"][0]["content"]["parts"][0]
-            return base64.b64decode(part["inlineData"]["data"])
+            r = json.load(urllib.request.urlopen(req, timeout=120))
+            data = json.loads(r["choices"][0]["message"]["content"])
+            if len(data.get("scenes", [])) < 3:
+                raise ValueError("too few scenes")
+            return data
         except urllib.error.HTTPError as e:
-            print("TTS HTTP ERROR", e.code, e.read().decode()[:300])
+            print("GROQ HTTP ERROR", e.code, e.read().decode()[:300])
             if e.code in (429, 500, 502, 503):
-                time.sleep(20 * (attempt + 1))
+                time.sleep(15 * (attempt + 1))
                 continue
             raise
-        except (KeyError, IndexError) as e:
-            print("TTS bad response, retrying...", e)
+        except (KeyError, ValueError, json.JSONDecodeError) as e:
+            print("Bad response, retrying...", e)
             time.sleep(5)
-    raise RuntimeError("Gemini TTS failed")
+    raise RuntimeError("Groq generation failed")
 
 
-def write_wav(path, audio):
-    if audio[:4] == b"RIFF":          # 3.8 returns a ready WAV with header
-        with open(path, "wb") as f:
-            f.write(audio)
-        return
-    with wave.open(path, "wb") as w:  # fallback: raw PCM
-        w.setnchannels(1)
-        w.setsampwidth(2)
-        w.setframerate(24000)
-        w.writeframes(audio)
+def write_topic(folder, topic, data):
+    os.makedirs(os.path.join(folder, "video"), exist_ok=True)
 
+    readme = [f"# {topic}", "", data.get("summary", ""), "", "## Key points"]
+    readme += [f"- {k}" for k in data.get("key_points", [])]
+    readme += ["", "**Watch:** coming soon.", ""]
+    open(os.path.join(folder, "README.md"), "w", encoding="utf-8").write("\n".join(readme))
 
-def run(cmd):
-    subprocess.run(cmd, check=True)
-
-
-def build_video(p, out_mp4):
-    script = os.path.join(p["path"], "video", "script.md")
-    scenes = parse_script(script)
-    if not scenes:
-        raise RuntimeError("No scenes found in " + script)
-    tmp = tempfile.mkdtemp()
-    clips = []
-    for n, (title, bullets, narration) in enumerate(scenes, 1):
-        png = f"{tmp}/s{n}.png"
-        wav = f"{tmp}/s{n}.wav"
-        mp4 = f"{tmp}/s{n}.mp4"
-        make_slide(png, p["topic"], n, len(scenes), title, bullets)
-        write_wav(wav, tts(narration))
-        run(["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", "25",
-             "-i", png, "-i", wav, "-c:v", "libx264", "-tune", "stillimage",
-             "-pix_fmt", "yuv420p", "-r", "25", "-c:a", "aac",
-             "-af", "apad=pad_dur=0.7",          # 0.7s silence after each scene
-             "-ar", "44100", "-ac", "2", "-b:a", "128k", "-shortest", mp4])
-        clips.append(mp4)
-        print("Scene", n, "done")
-        time.sleep(8)
-    lst = f"{tmp}/list.txt"
-    open(lst, "w").write("".join(f"file '{c}'\n" for c in clips))
-    run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
-         "-i", lst, "-c", "copy", out_mp4])
-    shutil.rmtree(tmp, ignore_errors=True)
-
-
-def upload(p, mp4):
-    tag = f"video-{p['key']}"
-    exists = subprocess.run(["gh", "release", "view", tag], capture_output=True).returncode == 0
-    if exists:
-        run(["gh", "release", "upload", tag, mp4, "--clobber"])
-    else:
-        run(["gh", "release", "create", tag, mp4,
-             "--title", f"Video: {p['topic']}",
-             "--notes", f"Narrated video for {p['topic']}"])
-    return f"https://github.com/{REPO}/releases/tag/{tag}"
-
-
-def update_readme(p, url):
-    path = os.path.join(p["path"], "README.md")
-    txt = open(path, encoding="utf-8").read()
-    txt = txt.replace("**Watch:** coming soon.", f"**Watch:** [Open video]({url})")
-    open(path, "w", encoding="utf-8").write(txt)
+    out = [f"# {topic}", ""]
+    for n, s in enumerate(data["scenes"], 1):
+        bullets = "\n".join(f"- {b}" for b in s["bullets"][:4])
+        narration = " ".join(s["narration"].split())
+        out.append(f"## Scene {n}: {s['title'].strip()}")
+        out.append("On-screen:")
+        out.append(bullets)
+        out.append("Narration:")
+        out.append(narration)
+        out.append("")
+    open(os.path.join(folder, "video", "script.md"), "w", encoding="utf-8").write("\n".join(out))
 
 
 def main():
-    if not GEMINI_KEY:
-        print("GEMINI_API_KEY not set, skipping video.")
+    if not GROQ_KEY:
+        print("ERROR: GROQ_API_KEY not set. Add it in repo Settings > Secrets > Actions.")
+        sys.exit(1)
+
+    progress = load_progress()
+    done = {p["topic"] for p in progress}
+    remaining = [t for t in TOPICS if t not in done]
+    if not remaining:
+        print("All topics in TOPICS are done. Add more topics.")
         return
-    progress = json.load(open(PROGRESS_FILE, encoding="utf-8"))
-    todo = [
-        p for i, p in enumerate(progress, 1)
-        if i >= START_TOPIC and not p.get("video_url")
-    ][:PER_RUN]
-    if not todo:
-        print("No topics need a video.")
-        return
-    for p in todo:
-        print("Video for:", p["topic"])
-        out = os.path.join(tempfile.gettempdir(), f"{p['key']}.mp4")
-        build_video(p, out)
-        url = upload(p, out)
-        update_readme(p, url)
-        p["video_url"] = url
-        json.dump(progress, open(PROGRESS_FILE, "w", encoding="utf-8"), indent=2)
-        print("Video ready:", url)
+
+    topic = remaining[0]
+    n = len(progress) + 1
+    key = f"{n:02d}-{slugify(topic)}"
+    folder = os.path.join(TOPICS_DIR, key)
+
+    print("Generating topic:", topic)
+    data = groq_json(topic)
+    write_topic(folder, topic, data)
+
+    progress.append({
+        "key": key,
+        "topic": topic,
+        "path": folder,
+        "date": datetime.date.today().isoformat(),
+    })
+    json.dump(progress, open(PROGRESS_FILE, "w", encoding="utf-8"), indent=2)
+    print("Created:", folder)
 
 
 main()
