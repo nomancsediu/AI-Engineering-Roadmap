@@ -1,14 +1,15 @@
 # Progress
 
-`[..............................]` **1 / 85** topics (1%)
+`[..............................]` **2 / 85** topics (2%)
 
-**Up next:** How LLMs generate text (LLM Fundamentals)
+**Up next:** Tokenization (LLM Fundamentals)
 
-## 1. LLM Fundamentals (1 / 9)
+## 1. LLM Fundamentals (2 / 9)
 
 | # | Topic | Notes |
 |--:|:------|:------|
 | 1 | What is an LLM | [Open](./01-LLM-Fundamentals/01-What-is-an-LLM/README.md) |
+| 2 | How LLMs generate text | [Open](./01-LLM-Fundamentals/02-How-LLMs-generate-text/README.md) |
 
 ## 2. Prompt and Context Engineering (0 / 7)
 
