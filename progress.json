@@ -16,5 +16,14 @@
     "topic": "How LLMs generate text",
     "path": "01-LLM-Fundamentals/02-How-LLMs-generate-text",
     "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-2"
+  },
+  {
+    "key": "1-3",
+    "module_index": 1,
+    "topic_index": 3,
+    "module": "LLM Fundamentals",
+    "topic": "Tokenization",
+    "path": "01-LLM-Fundamentals/03-Tokenization",
+    "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-3"
   }
 ]

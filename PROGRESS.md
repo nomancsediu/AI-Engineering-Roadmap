@@ -1,15 +1,16 @@
 # Progress
 
-`[..............................]` **2 / 85** topics (2%)
+`[#.............................]` **3 / 85** topics (4%)
 
-**Up next:** Tokenization (LLM Fundamentals)
+**Up next:** Context windows (LLM Fundamentals)
 
-## 1. LLM Fundamentals (2 / 9)
+## 1. LLM Fundamentals (3 / 9)
 
 | # | Topic | Notes |
 |--:|:------|:------|
 | 1 | What is an LLM | [Open](./01-LLM-Fundamentals/01-What-is-an-LLM/README.md) |
 | 2 | How LLMs generate text | [Open](./01-LLM-Fundamentals/02-How-LLMs-generate-text/README.md) |
+| 3 | Tokenization | [Open](./01-LLM-Fundamentals/03-Tokenization/README.md) |
 
 ## 2. Prompt and Context Engineering (0 / 7)
 
