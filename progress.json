@@ -34,5 +34,14 @@
     "topic": "Context windows",
     "path": "01-LLM-Fundamentals/04-Context-windows",
     "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-4"
+  },
+  {
+    "key": "1-5",
+    "module_index": 1,
+    "topic_index": 5,
+    "module": "LLM Fundamentals",
+    "topic": "Sampling: temperature, top-p, top-k",
+    "path": "01-LLM-Fundamentals/05-Sampling-temperature-top-p-top-k",
+    "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-5"
   }
 ]

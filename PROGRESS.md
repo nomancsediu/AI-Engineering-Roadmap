@@ -1,10 +1,10 @@
 # Progress
 
-`[#.............................]` **4 / 85** topics (5%)
+`[#.............................]` **5 / 85** topics (6%)
 
-**Up next:** Sampling: temperature, top-p, top-k (LLM Fundamentals)
+**Up next:** Hallucinations (LLM Fundamentals)
 
-## 1. LLM Fundamentals (4 / 9)
+## 1. LLM Fundamentals (5 / 9)
 
 | # | Topic | Notes |
 |--:|:------|:------|
@@ -12,6 +12,7 @@
 | 2 | How LLMs generate text | [Open](./01-LLM-Fundamentals/02-How-LLMs-generate-text/README.md) |
 | 3 | Tokenization | [Open](./01-LLM-Fundamentals/03-Tokenization/README.md) |
 | 4 | Context windows | [Open](./01-LLM-Fundamentals/04-Context-windows/README.md) |
+| 5 | Sampling: temperature, top-p, top-k | [Open](./01-LLM-Fundamentals/05-Sampling-temperature-top-p-top-k/README.md) |
 
 ## 2. Prompt and Context Engineering (0 / 7)
 
