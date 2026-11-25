@@ -1,10 +1,10 @@
 # Progress
 
-`[#.............................]` **5 / 85** topics (6%)
+`[##............................]` **6 / 85** topics (7%)
 
-**Up next:** Hallucinations (LLM Fundamentals)
+**Up next:** Model types and how to choose one (LLM Fundamentals)
 
-## 1. LLM Fundamentals (5 / 9)
+## 1. LLM Fundamentals (6 / 9)
 
 | # | Topic | Notes |
 |--:|:------|:------|
@@ -13,6 +13,7 @@
 | 3 | Tokenization | [Open](./01-LLM-Fundamentals/03-Tokenization/README.md) |
 | 4 | Context windows | [Open](./01-LLM-Fundamentals/04-Context-windows/README.md) |
 | 5 | Sampling: temperature, top-p, top-k | [Open](./01-LLM-Fundamentals/05-Sampling-temperature-top-p-top-k/README.md) |
+| 6 | Hallucinations | [Open](./01-LLM-Fundamentals/06-Hallucinations/README.md) |
 
 ## 2. Prompt and Context Engineering (0 / 7)
 

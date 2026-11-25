@@ -43,5 +43,14 @@
     "topic": "Sampling: temperature, top-p, top-k",
     "path": "01-LLM-Fundamentals/05-Sampling-temperature-top-p-top-k",
     "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-5"
+  },
+  {
+    "key": "1-6",
+    "module_index": 1,
+    "topic_index": 6,
+    "module": "LLM Fundamentals",
+    "topic": "Hallucinations",
+    "path": "01-LLM-Fundamentals/06-Hallucinations",
+    "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-6"
   }
 ]
