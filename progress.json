@@ -52,5 +52,14 @@
     "topic": "Hallucinations",
     "path": "01-LLM-Fundamentals/06-Hallucinations",
     "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-6"
+  },
+  {
+    "key": "1-7",
+    "module_index": 1,
+    "topic_index": 7,
+    "module": "LLM Fundamentals",
+    "topic": "Model types and how to choose one",
+    "path": "01-LLM-Fundamentals/07-Model-types-and-how-to-choose-one",
+    "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-7"
   }
 ]

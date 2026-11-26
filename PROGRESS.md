@@ -1,10 +1,10 @@
 # Progress
 
-`[##............................]` **6 / 85** topics (7%)
+`[##............................]` **7 / 85** topics (8%)
 
-**Up next:** Model types and how to choose one (LLM Fundamentals)
+**Up next:** Token pricing and cost (LLM Fundamentals)
 
-## 1. LLM Fundamentals (6 / 9)
+## 1. LLM Fundamentals (7 / 9)
 
 | # | Topic | Notes |
 |--:|:------|:------|
@@ -14,6 +14,7 @@
 | 4 | Context windows | [Open](./01-LLM-Fundamentals/04-Context-windows/README.md) |
 | 5 | Sampling: temperature, top-p, top-k | [Open](./01-LLM-Fundamentals/05-Sampling-temperature-top-p-top-k/README.md) |
 | 6 | Hallucinations | [Open](./01-LLM-Fundamentals/06-Hallucinations/README.md) |
+| 7 | Model types and how to choose one | [Open](./01-LLM-Fundamentals/07-Model-types-and-how-to-choose-one/README.md) |
 
 ## 2. Prompt and Context Engineering (0 / 7)
 
