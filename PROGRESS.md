@@ -1,10 +1,10 @@
 # Progress
 
-`[##............................]` **7 / 85** topics (8%)
+`[##............................]` **8 / 85** topics (9%)
 
-**Up next:** Token pricing and cost (LLM Fundamentals)
+**Up next:** Training vs inference (LLM Fundamentals)
 
-## 1. LLM Fundamentals (7 / 9)
+## 1. LLM Fundamentals (8 / 9)
 
 | # | Topic | Notes |
 |--:|:------|:------|
@@ -15,6 +15,7 @@
 | 5 | Sampling: temperature, top-p, top-k | [Open](./01-LLM-Fundamentals/05-Sampling-temperature-top-p-top-k/README.md) |
 | 6 | Hallucinations | [Open](./01-LLM-Fundamentals/06-Hallucinations/README.md) |
 | 7 | Model types and how to choose one | [Open](./01-LLM-Fundamentals/07-Model-types-and-how-to-choose-one/README.md) |
+| 8 | Token pricing and cost | [Open](./01-LLM-Fundamentals/08-Token-pricing-and-cost/README.md) |
 
 ## 2. Prompt and Context Engineering (0 / 7)
 

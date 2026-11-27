@@ -61,5 +61,14 @@
     "topic": "Model types and how to choose one",
     "path": "01-LLM-Fundamentals/07-Model-types-and-how-to-choose-one",
     "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-7"
+  },
+  {
+    "key": "1-8",
+    "module_index": 1,
+    "topic_index": 8,
+    "module": "LLM Fundamentals",
+    "topic": "Token pricing and cost",
+    "path": "01-LLM-Fundamentals/08-Token-pricing-and-cost",
+    "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-8"
   }
 ]
