@@ -1,10 +1,10 @@
 # Progress
 
-`[##............................]` **8 / 85** topics (9%)
+`[###...........................]` **9 / 85** topics (11%)
 
-**Up next:** Training vs inference (LLM Fundamentals)
+**Up next:** Prompt engineering basics (Prompt and Context Engineering)
 
-## 1. LLM Fundamentals (8 / 9)
+## 1. LLM Fundamentals (9 / 9)
 
 | # | Topic | Notes |
 |--:|:------|:------|
@@ -16,6 +16,7 @@
 | 6 | Hallucinations | [Open](./01-LLM-Fundamentals/06-Hallucinations/README.md) |
 | 7 | Model types and how to choose one | [Open](./01-LLM-Fundamentals/07-Model-types-and-how-to-choose-one/README.md) |
 | 8 | Token pricing and cost | [Open](./01-LLM-Fundamentals/08-Token-pricing-and-cost/README.md) |
+| 9 | Training vs inference | [Open](./01-LLM-Fundamentals/09-Training-vs-inference/README.md) |
 
 ## 2. Prompt and Context Engineering (0 / 7)
 

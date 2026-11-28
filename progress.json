@@ -70,5 +70,14 @@
     "topic": "Token pricing and cost",
     "path": "01-LLM-Fundamentals/08-Token-pricing-and-cost",
     "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-8"
+  },
+  {
+    "key": "1-9",
+    "module_index": 1,
+    "topic_index": 9,
+    "module": "LLM Fundamentals",
+    "topic": "Training vs inference",
+    "path": "01-LLM-Fundamentals/09-Training-vs-inference",
+    "video_url": "https://github.com/nomancsediu/AI-Engineering-Roadmap/releases/tag/video-1-9"
   }
 ]
